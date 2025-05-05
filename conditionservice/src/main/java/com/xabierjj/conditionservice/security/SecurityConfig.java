@@ -1,4 +1,4 @@
-package com.xabierjj.userservice.security;
+package com.xabierjj.conditionservice.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

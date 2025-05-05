@@ -16,6 +16,12 @@ spring:
       hibernate:
         format_sql: true
     database: postgresql
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/master
+          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
 
 server:
   port: 8082
