@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-postgres
+  labels:
+    app: url-shortener-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-shortener-postgres
+  template:
+    metadata:
+      labels:
+        app: url-shortener-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: urlshortener
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: url-shortener-secret
+                  key: URL_SHORTENER_POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: url-shortener-secret
+                  key: URL_SHORTENER_POSTGRES_PASSWORD
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-shortener-postgres-service
+spec:
+  selector:
+    app: url-shortener-postgres
+  ports:
+    - protocol: TCP
+      # Port exposed inside the cluster
+      port: 5433      
+      # Port inside the container
+      targetPort: 5432 

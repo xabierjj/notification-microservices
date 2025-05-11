@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-postgres
+  labels:
+    app:  keycloak-postgres
+#Deployment specification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak-postgres
+  template:
+    metadata:
+      labels:
+        app: keycloak-postgres
+    # Pod template specification
+    spec:
+      containers:
+      - name: keycloak-postgres
+        image: postgres:15 
+        ports:
+        - containerPort: 5432
+        env:
+        #TODO create secrets
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: POSTGRES_PASSWORD
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-postgres-service
+spec:
+  selector:
+    app: keycloak-postgres
+  ports:
+    - protocol: TCP
+      # port other services will use
+      port: 5432
+      # port postgres is listening to in the container
+      targetPort: 5432
